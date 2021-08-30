@@ -3,13 +3,23 @@
     <StackLayout
       class="form"
       height="100%"
-      verticalAlignment="center"
+      verticalAlignment="bottom"
       paddingBottom="20px"
     >
-      <StackLayout>
+      <StackLayout paddingBottom="20">
+            <ScrollView height="200">
+                <StackLayout verticalAlignment="bottom">
+                    <FlexBoxLayout :key="index" v-for="(codeobj, index) in results">
+                        <Label :text="codeobj.code" width="50%" textAlignment="center" fontSize="lg"/>
+                        <Label :text="codeobj.status" width="50%" textAlignment="center" :class="codeobj.status" textTransform="uppercase" fontSize="lg"/>
+                    </FlexBoxLayout>
+                </StackLayout>
+            </ScrollView>
+      </StackLayout>
         <Label 
             fontSize="lg"
-            padding="25"
+            paddingLeft="25"
+            paddingRight="25"
             textWrap="true"
             textAlignment="center"
             v-if="lastScannedCode"
@@ -24,37 +34,28 @@
           :class="lastScannedCode.status"
           textAlignment="center"
         />
-        <Button
-          fontSize="20px"
-          text="Scan"
-          @tap="performScan()"
-          class="buttoncolor"
-        >
-        </Button>
-        <Button
-          fontSize="20px"
-          text="Continuous Scan"
-          @tap="continuousScan()"
-          class="buttoncolor"
-        >
-        </Button>
 
-            <ScrollView height="200">
-                <StackLayout>
-                    <FlexBoxLayout :key="index" v-for="(codeobj, index) in results">
-                        <Label :text="codeobj.code" width="50%" textAlignment="center" fontSize="lg"/>
-                        <Label :text="codeobj.status" width="50%" textAlignment="center" :class="codeobj.status" fontSize="lg"/>
-                    </FlexBoxLayout>
-                </StackLayout>
-            </ScrollView>
-        <Label :text="results.length"/>
-      </StackLayout>
+        <FlexboxLayout alignItems="center" width="100%">
+          <Button
+            flexGrow="1"
+            fontSize="20px"
+            text="Scan"
+            @tap="performScan()"
+
+            class="buttoncolor"
+          />
+          <Label text="Continuous Mode"/>
+            <Switch v-model="isContinuous" />
+        </FlexboxLayout>
+
     </StackLayout>
   </Page>
 </template>
 
 <script>
 // const sound = require("nativescript-sound");
+const audio = require('nativescript-audio');
+const player = new audio.TNSPlayer();
 import { BarcodeScanner } from "nativescript-barcodescanner";
 import { Http } from '@nativescript/core'
 
@@ -75,6 +76,9 @@ export default {
   },
   data() {
     return {
+
+      isContinuous: false,
+
       sounds: {
         success: null,
         failure: null,
@@ -92,7 +96,22 @@ export default {
     };
   },
   methods: {
-    performScan() {
+
+    playSound(fileName){
+      player.playFromUrl({
+          audioFile: fileName,
+          loop: false,
+      })
+    },
+    performScan(){
+      if(this.isContinuous){
+        this.continuousScan()
+      } else {
+        this.performScanSingle()
+      }
+    },
+
+    performScanSingle() {
       const barcodescanner = new BarcodeScanner();
       barcodescanner
         .scan({
@@ -106,13 +125,13 @@ export default {
         .then(
           async (result) => {
             await this.submitQR(result.text);
-            // if (this.lastScannedCode.status === "valid") {
-            //   this.sounds.success.play();
-            // } else if (this.lastScannedCode.status === "invalid") {
-            //   this.sounds.failure.play();
-            // } else if (this.lastScannedCode.status === "scanned") {
-            //   this.sounds.scanned.play();
-            // }
+            if (this.lastScannedCode.status === "valid") {
+              this.playSound("~/assets/success.mp3");
+            } else if (this.lastScannedCode.status === "invalid") {
+              this.playSound("~/assets/invalid.mp3");
+            } else if (this.lastScannedCode.status === "scanned") {
+              this.playSound("~/assets/scanned2.mp3");
+            }
           },
           (error) => {
             console.log("No scan: " + error);
@@ -159,11 +178,11 @@ export default {
         })
 
         this.result = {
-          status: response.content.toString(),
+          status: response.content.toString().replace('"','').replace('"',''),
           code,
         };
-
         this.results.unshift(this.result);
+        console.log(this.results)
 
         return Promise.resolve();
         //console.log(this.status);
@@ -196,25 +215,5 @@ export default {
 }
 .error {
   color: rgb(31, 23, 23);
-}
-.testcolor {
-  background-color: rgb(234, 250, 17);
-}
-
-.textcolor {
-  text-align: center;
-  color: rgb(238, 241, 241);
-}
-
-.appcolor {
-  background: rgb(224, 234, 255);
-}
-
-.debug {
-  border: 1px solid red;
-}
-
-.buttoncolor {
-  background: rgb(238, 241, 241);
 }
 </style>

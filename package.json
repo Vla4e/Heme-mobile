@@ -37,9 +37,11 @@
     "category-general"
   ],
   "dependencies": {
+    "@klippa/nativescript-http": "^2.0.0",
     "@nativescript/core": "~8.0.0",
     "@nativescript/theme": "~3.0.1",
     "@triniwiz/nativescript-toasty": "^4.1.3",
+    "nativescript-audio": "^6.2.6",
     "nativescript-barcodescanner": "^4.1.2",
     "nativescript-sound": "^1.0.4",
     "nativescript-vue": "~2.9.0"
