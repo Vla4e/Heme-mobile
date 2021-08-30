@@ -1,14 +1,14 @@
 <template>
-  <Page class="appcolor" actionBarHidden="true">
+  <Page actionBarHidden="true">
     <ActivityIndicator :busy="loading"></ActivityIndicator>
   
-    <StackLayout class="form" verticalAlignment="center">
+    <StackLayout class="form" verticalAlignment="center" paddingLeft="10" paddingRight="10">
       <template v-if="hasConnection && hasPermission">
         <StackLayout class="input-field">
           <TextField
             fontSize="lg"
             hint="Enter Email"
-            class="input textcolor"
+            class="input"
             v-model="auth.email"
           ></TextField>
         </StackLayout>
@@ -18,24 +18,17 @@
         <StackLayout class="input-field">
           <TextField
             hint="Enter Password"
-            class="input textcolor"
+            class="input"
             v-model="auth.password"
             secure="true"
             fontSize="lg"
           >
           </TextField>
         </StackLayout>
-
+        <StackLayout margin="15" />
         <Button
           text="Log In"
           @tap="submitLogin()"
-          class="btn btn-primary buttoncolor"
-          >
-        </Button>
-        <Button
-          text="Test Request"
-          @tap="testRequest()"
-          class="btn btn-primary buttoncolor"
           >
         </Button>
       </template>
@@ -94,7 +87,6 @@ export default {
         return;
       }
       const tempToken = ApplicationSettings.getString('heme.authtoken', null)
-      console.log(tempToken)
       if(tempToken){
           console.log(`Tempif ${tempToken}`)
           this.$navigateTo(QRScanPage, {
@@ -117,7 +109,7 @@ export default {
           },
           content: JSON.stringify({ ...this.auth }),
         })
-        console.log(response)
+        console.log(response.headers)
         if(response.statusCode === 404){
           throw{
           }
@@ -131,7 +123,6 @@ export default {
         })
       }
       catch(e){
-        console.error(e)
         const toast = new Toasty({ text: `Invalid Login` });
         toast.duration = ToastDuration.SHORT;
         toast.show();
@@ -146,7 +137,3 @@ export default {
   },
 };
 </script>
-
-<style>
-
-</style>

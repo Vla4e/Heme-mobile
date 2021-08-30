@@ -1,5 +1,5 @@
 <template>
-  <Page actionBarHidden="true" class="appcolor">
+  <Page actionBarHidden="true">
     <StackLayout
       class="form"
       height="100%"
