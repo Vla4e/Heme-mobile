@@ -117,7 +117,7 @@ export default {
       this.submitQR(e.text)
     },
     playSound(fileName) {
-      player.playFromUrl({
+      player.playFromFile({
         audioFile: fileName,
         loop: false,
       })
