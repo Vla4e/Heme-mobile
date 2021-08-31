@@ -1,7 +1,7 @@
 import { NativeScriptConfig } from '@nativescript/core';
 
 export default {
-  id: 'org.nativescript.dummynsvue',
+  id: 'ro.heme.qrscanner',
   appPath: 'app',
   appResourcesPath: 'App_Resources',
   android: {

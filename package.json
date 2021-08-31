@@ -1,7 +1,7 @@
 {
-  "name": "@nativescript/template-blank-vue",
+  "name": "heme-qr-scanner",
   "main": "app/app.js",
-  "displayName": "Blank",
+  "displayName": "Heme QR Scanner",
   "version": "8.0.4",
   "description": "NativeScript Application",
   "author": "NativeScript Team <oss@nativescript.org>",

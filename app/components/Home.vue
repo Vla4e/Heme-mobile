@@ -109,7 +109,6 @@ export default {
           },
           content: JSON.stringify({ ...this.auth }),
         })
-        console.log(response.headers)
         if(response.statusCode === 404){
           throw{
           }
