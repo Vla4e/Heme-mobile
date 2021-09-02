@@ -102,7 +102,7 @@ export default {
       try {
         console.log(this.auth)
         const response = await Http.request({
-          url: 'https://dev-api.heme.ro/token/create',
+          url: 'https://api.heme.ro/api/login',
           method: 'POST',
           headers: {
             "Content-Type": "application/json",

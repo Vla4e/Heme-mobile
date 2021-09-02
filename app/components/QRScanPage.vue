@@ -117,8 +117,16 @@ export default {
   },
   methods: {
 
-    onLogout(){
+    async onLogout(){
       try{
+        const response = await Http.request({
+          url: "https://api.heme.ro/api/logout",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.token}`,
+          }
+        })
         ApplicationSettings.setString('heme.authtoken', "")
         this.$navigateTo(Home)
       }
