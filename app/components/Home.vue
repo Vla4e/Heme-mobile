@@ -62,8 +62,8 @@ export default {
     return {
       result: "",
       auth: {
-        email: "test@api.com",
-        password: "J_EF5rcTQVfsgmpu",
+        email: "",
+        password: "",
         device_name: Device.uuid.toString(),
       },
       loading: false,

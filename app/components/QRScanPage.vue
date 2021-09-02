@@ -1,6 +1,9 @@
 <template>
   <Page actionBarHidden="true">
-    <FlexboxLayout flexDirection="column" height="100%">
+    <FlexboxLayout flexDirection="column" height="100%" paddingTop="35">
+      <FlexboxLayout justifyContent = "flex-end" width="100%" paddingRight="10">
+       <Button fontSize="18" text="Logout" horizontalAlignment="right" @tap="onLogout()" />
+      </FlexboxLayout>
       <StackLayout>
         <BarcodeScanner
           row="1"
@@ -69,7 +72,8 @@
 </template>
 
 <script>
-import { Application, Http } from "@nativescript/core"
+import Home from "./Home"
+import { ApplicationSettings ,Application, Http } from "@nativescript/core"
 import { BarcodeScanner } from "nativescript-barcodescanner"
 
 const barcodescanner = new BarcodeScanner()
@@ -112,6 +116,17 @@ export default {
     }
   },
   methods: {
+
+    onLogout(){
+      try{
+        ApplicationSettings.setString('heme.authtoken', "")
+        this.$navigateTo(Home)
+      }
+      catch(e){
+        console.error(e)
+      }
+    },
+
     onScanResult(e) {
       this.isiosscannerpaused = !this.isContinuous
       this.submitQR(e.text)
@@ -160,7 +175,7 @@ export default {
     async submitQR(code) {
       try {
         const response = await Http.request({
-          url: "https://dev-api.heme.ro/code/validate",
+          url: "https://api.heme.ro/api/code/validate",
           method: "POST",
           headers: {
             "Content-Type": "application/json",
