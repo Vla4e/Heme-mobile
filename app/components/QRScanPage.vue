@@ -1,8 +1,8 @@
 <template>
   <Page actionBarHidden="true">
     <FlexboxLayout flexDirection="column" height="100%" paddingTop="35">
-      <FlexboxLayout justifyContent = "flex-end" width="100%" paddingRight="10">
-       <Button fontSize="18" text="Logout" horizontalAlignment="right" @tap="onLogout()" />
+      <FlexboxLayout justifyContent="flex-end" width="100%" paddingRight="10" paddingBottom="10">
+        <Button fontSize="18" text="Logout" horizontalAlignment="right" @tap="onLogout()" />
       </FlexboxLayout>
       <StackLayout>
         <BarcodeScanner
