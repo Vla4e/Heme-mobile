@@ -130,7 +130,7 @@ export default {
           }
         })
         ApplicationSettings.setString('heme.authtoken', "")
-        this.$navigateTo(Home)
+        this.$navigateTo(Home, { clearHistory: true })
       }
       catch(e){
         console.error(e)

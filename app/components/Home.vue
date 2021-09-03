@@ -80,6 +80,7 @@ export default {
       const tempToken = ApplicationSettings.getString('heme.authtoken', null)
       if (tempToken) {
         this.$navigateTo(QRScanPage, {
+          clearHistory: true,
           props: {
             token: tempToken,
           }
@@ -116,6 +117,7 @@ export default {
         this.result = response.content.toString()
         ApplicationSettings.setString('heme.authtoken', this.result)
         this.$navigateTo(QRScanPage, {
+          clearHistory: true,
           props: {
             token: this.result,
           },
