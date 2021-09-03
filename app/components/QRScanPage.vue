@@ -86,13 +86,14 @@ export default {
     token: String,
   },
   data() {
+    const deviceName = ApplicationSettings.getString('heme.devicename', 'DeviceName')
     return {
       isContinuous: false,
       sounds: {
         success: null,
         failure: null,
       },
-      deviceName: 'DeviceName',
+      deviceName,
       isiosscannerpaused: false,
       result: {
         status: [],
@@ -115,10 +116,12 @@ export default {
         if (val) this.isiosscannerpaused = false
       },
       immediate: true
+    },
+    deviceName(val) {
+      ApplicationSettings.setString('heme.devicename', val)
     }
   },
   methods: {
-
     async onLogout(){
       try{
         const response = await Http.request({
@@ -132,7 +135,7 @@ export default {
         ApplicationSettings.setString('heme.authtoken', "")
         this.$navigateTo(Home, { clearHistory: true })
       }
-      catch(e){
+      catch(e) {
         console.error(e)
       }
     },
