@@ -1,8 +1,11 @@
 <template>
-  <Page actionBarHidden="true">
-    <ActivityIndicator :busy="loading"></ActivityIndicator>
-  
-    <StackLayout class="form" verticalAlignment="center" paddingLeft="10" paddingRight="10">
+  <Page actionBarHidden="true">  
+    <FlexboxLayout flexDirection="column" paddingLeft="10" paddingRight="10" v-if="ready">
+      <StackLayout flexGrow="1" />
+      <Image src="~/assets/logo.png" width="200" marginBottom="15" />
+      <Label textAlignment="center" text="Heme Scan" fontSize="24"/>
+      <StackLayout flexGrow="1" />
+
       <template v-if="hasConnection && hasPermission">
         <StackLayout class="input-field">
           <TextField
@@ -14,7 +17,6 @@
         </StackLayout>
 
         <StackLayout margin="15" />
-
         <StackLayout class="input-field">
           <TextField
             hint="Enter Password"
@@ -26,11 +28,8 @@
           </TextField>
         </StackLayout>
         <StackLayout margin="15" />
-        <Button
-          text="Log In"
-          @tap="submitLogin()"
-          >
-        </Button>
+        <Button text="Log In" @tap="submitLogin()"></Button>
+        <StackLayout margin="5" />
       </template>
 
       <template v-if="!hasPermission">
@@ -41,22 +40,21 @@
         <Label text="No Internet connection detected!" padding="25" textAlignment="center"/>
         <Button @tap="recheckConnection()" text="Recheck connection"/>
       </template>
-    </StackLayout>
+    </FlexboxLayout>
   </Page>
 </template>
 
 <script>
-import { ApplicationSettings, Connectivity, Device} from '@nativescript/core'
-import QRScanPage from './QRScanPage.vue';
+import { ApplicationSettings, Connectivity, Device } from '@nativescript/core'
+import QRScanPage from './QRScanPage.vue'
 import {Http} from '@klippa/nativescript-http'
 import { Toasty, ToastDuration } from "@triniwiz/nativescript-toasty"
-import { BarcodeScanner } from "nativescript-barcodescanner";
-const barcodescanner = new BarcodeScanner();
+import { BarcodeScanner } from "nativescript-barcodescanner"
+const barcodescanner = new BarcodeScanner()
 
 export default {
-
   async mounted() {
-    setTimeout(this.init, 2000)
+    this.init()
   },
   data() {
     return {
@@ -69,38 +67,40 @@ export default {
       loading: false,
       hasConnection: true,
       hasPermission: true,
-    };
+      ready: false
+    }
   },
   methods: {
-    
-    async init(){
-      try{
-        await barcodescanner.requestCameraPermission()
-        this.hasPermission = await barcodescanner.hasCameraPermission()
-      }
-      catch(e){
-        this.hasPermission = false;
-      }
+    async init() {
       this.recheckConnection()
-      
-      if(!this.hasPermission){
-        return;
+      if (!this.hasConnection) {
+        this.ready = true
       }
+
       const tempToken = ApplicationSettings.getString('heme.authtoken', null)
-      if(tempToken){
-          console.log(`Tempif ${tempToken}`)
-          this.$navigateTo(QRScanPage, {
-            props: {
-              token: tempToken,
-            },
-          })
+      if (tempToken) {
+        this.$navigateTo(QRScanPage, {
+          props: {
+            token: tempToken,
+          }
+        })
+        return
+      }
+      this.ready = true
+
+      try {
+        setTimeout(async () => {
+          await barcodescanner.requestCameraPermission()
+          this.hasPermission = await barcodescanner.hasCameraPermission()
+        }, 2000)
+      }
+      catch(e) {
+        this.hasPermission = false
       }
     },
-
     async submitLogin() {
       this.loading = true
       try {
-        console.log(this.auth)
         const response = await Http.request({
           url: 'https://api.heme.ro/api/login',
           method: 'POST',
@@ -122,9 +122,9 @@ export default {
         })
       }
       catch(e){
-        const toast = new Toasty({ text: `Invalid Login` });
-        toast.duration = ToastDuration.SHORT;
-        toast.show();
+        const toast = new Toasty({ text: `Invalid Login` })
+        toast.duration = ToastDuration.SHORT
+        toast.show()
       } finally {
         this.loading = false
       }
@@ -134,5 +134,5 @@ export default {
       this.hasConnection = connectionType !== Connectivity.connectionType.none
     }
   },
-};
+}
 </script>

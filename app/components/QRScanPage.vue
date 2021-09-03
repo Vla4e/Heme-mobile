@@ -1,8 +1,8 @@
 <template>
   <Page actionBarHidden="true">
     <FlexboxLayout flexDirection="column" height="100%" paddingTop="35">
-      <FlexboxLayout justifyContent="flex-end" width="100%" paddingRight="10" paddingBottom="10">
-        <Button fontSize="18" text="Logout" horizontalAlignment="right" @tap="onLogout()" />
+      <FlexboxLayout justifyContent="flex-end" width="100%" paddingBottom="10">
+        <Button fontSize="18" marginRight="10" text="Logout" horizontalAlignment="right" @tap="onLogout()" />
       </FlexboxLayout>
       <StackLayout>
         <BarcodeScanner
@@ -61,11 +61,12 @@
           paddingBottom="20"
         />
         <StackLayout flexGrow="1" />
-        <FlexboxLayout alignItems="center" width="100%">
+        <FlexboxLayout justifyContent="space-around" alignItems="center" width="100%">
           <Button flexGrow="1" fontSize="20" text="Scan" @tap="performScan()" />
           <Label text="Continuous Mode" marginRight="5" />
           <Switch v-model="isContinuous" />
         </FlexboxLayout>
+        <TextField hint="Device Name" v-model="deviceName" marginTop="10"></TextField>
       </FlexboxLayout>
     </FlexboxLayout>
   </Page>
@@ -73,7 +74,7 @@
 
 <script>
 import Home from "./Home"
-import { ApplicationSettings ,Application, Http } from "@nativescript/core"
+import { ApplicationSettings, Application, Device, Http } from "@nativescript/core"
 import { BarcodeScanner } from "nativescript-barcodescanner"
 
 const barcodescanner = new BarcodeScanner()
@@ -91,6 +92,7 @@ export default {
         success: null,
         failure: null,
       },
+      deviceName: 'DeviceName',
       isiosscannerpaused: false,
       result: {
         status: [],
@@ -134,7 +136,6 @@ export default {
         console.error(e)
       }
     },
-
     onScanResult(e) {
       this.isiosscannerpaused = !this.isContinuous
       this.submitQR(e.text)
@@ -189,7 +190,11 @@ export default {
             "Content-Type": "application/json",
             Authorization: `Bearer ${this.token}`,
           },
-          content: JSON.stringify({ code }),
+          content: JSON.stringify({
+            code,
+            device_name: Device.uuid.toString(),
+            data: this.deviceName
+          }),
         })
 
         if (response.statusCode >= 400) throw {}
